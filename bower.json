@@ -1,0 +1,31 @@
+{
+    "name": "ngHelperToolbar",
+    "main": [
+        "ngHelperToolbar.js"
+    ],
+    "version": "0.0.1",
+    "homepage": "https://github.com/ngHelper/ngHelperToolbar",
+    "authors": [
+        "dei79 <dirk.eisenberg@gmail.com>"
+    ],
+    "description": "$toolbar service to implement traditional toolbar logic. Works well with the bootstrap navbar",
+    "keywords": [
+        "angular",
+        "angularjs",
+        "toolbar",
+        "service",
+        "navbar",
+        "bootstrap"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "angular": "~1.2"
+    }
+}
