@@ -78,6 +78,25 @@ As visible every menu item has a couple of methods:
 4. item.hasImage() - This function checks if the item has an image or a font class as icon. If the item has an image the img tag should be used instead of an i-tag.
 5. item.imageUrl() - This function returns the image url removed by the img: prefix. 
 
+### Handle data updates in the user interface
+The controller who is responsibe for the view can be notified when the toolbar service has changed some data. There are two method which can be used in the form bellow. Every described eventhandle can be used several times in the application: 
+
+#### $toolbar.onVisibilityCheck
+```javascript
+$toolbar.onVisibilityCheck( funciton(item) {
+    return true
+}
+```
+With the onVisibilityCheck a callback will be registered which is executed when ever the system needs to know if an item is visible or not. This can be used to implement a central location to validate permissions similar to the cancan gem in ruby on rails.
+
+#### $toolbar.onUpdate
+```javascript
+$toolbar.onUpdate( function() {
+    $scope.items = $toolbar.items
+}
+```
+The onUpdate function can be used to register a callback which handles the update data notification. Normally this callback is used to update the scope parameter which holds the toolbar items so that angular js is applying the changes in the view.  
+ 
 ## Demo
 The ngHelperToolbar module is used in the [applogger.io](https://applogger.io) service as shown here:
 ![applogger.io](https://applogger.blob.core.windows.net/public/applogger-ngtoolbar.png)
