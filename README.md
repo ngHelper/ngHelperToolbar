@@ -36,6 +36,48 @@ The parameters are defined as follows
 7. order: The position of the item in the toolbar (The parameter is optional).
 8. parent: Normally null, is used for child menus and contains the tag of the parent menu (The parameter is optional). 
 
+### Build view and controller logic arround the $toolbar service
+Currently the toolbar service is delivered without any view directives or some view related business logic. This can be implemented from the consumer in an existing navigation controller for instance. The following markup shows a simple example how to render the $toolbar.items collection which is assigned to a controller variable on the local $scope: 
+
+```html
+<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav navbar-right">
+        <li class="nav-action" ng-repeat="item in toolbarItems" ng-class="{dropdown: item.hasChilds() }" ng-show="item.isVisible()">
+            <!-- The menu entry when the item has childs -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" ng-show="item.hasChilds()" style="padding-top:8px;">
+                <img ng-src="{{item.imageUrl()}}" class="menu-avatar"/>
+                <span>{{item.name}}</span>
+                <b class="caret"></b>
+            </a>
+
+            <!-- The menu entry when the item has no childs -->
+            <a ng-click="item.action()" ng-show="!item.hasChilds()">
+                <i class="fa {{item.iconClass}} fa-2x"></i>
+                <span>{{item.name}}</span>
+            </a>
+
+            <!-- The generated dropdown when the item has childs -->
+            <ul class="dropdown-menu" ng-show="item.hasChilds()">
+                <li ng-repeat="subitem in item.items" ng-show="subitem.isVisible()">
+                    <a ng-click="subitem.action()">
+                        <i class="fa {{subitem.iconClass}}" style="width: 14px; height: 13px; margin-right: 5px;"></i>
+                        <span>{{subitem.name}}</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+```
+
+As visible every menu item has a couple of methods: 
+
+1. itm.isVisible() - Evaluates if a specific item is visible or not. This function returns true or false and can perform a reavaluation of the items visibility but normally it lives from the cached values.
+2. item.action() - The function which should be called when ever a user clicks on the toolbar item, This function performs the defined action during registration.
+3. item.hasChilds() - This function evaluates if the item has other sub items and can be used to render dropdown menus or tree structures
+4. item.hasImage() - This function checks if the item has an image or a font class as icon. If the item has an image the img tag should be used instead of an i-tag.
+5. item.imageUrl() - This function returns the image url removed by the img: prefix. 
+
 ## Demo
 The ngHelperToolbar module is used in the [applogger.io](https://applogger.io) service as shown here:
 ![applogger.io](https://applogger.blob.core.windows.net/public/applogger-ngtoolbar.png)
