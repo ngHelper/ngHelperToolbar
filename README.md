@@ -36,7 +36,7 @@ The parameters are defined as follows
 7. order: The position of the item in the toolbar (The parameter is optional).
 8. parent: Normally null, is used for child menus and contains the tag of the parent menu (The parameter is optional). 
 
-### Build view and controller logic arround the $toolbar service
+### Build view and controller logic around the $toolbar service
 Currently the toolbar service is delivered without any view directives or some view related business logic. This can be implemented from the consumer in an existing navigation controller for instance. The following markup shows a simple example how to render the $toolbar.items collection which is assigned to a controller variable on the local $scope: 
 
 ```html
