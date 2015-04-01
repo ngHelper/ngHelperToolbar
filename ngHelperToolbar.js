@@ -150,14 +150,16 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
 
         // ensure that we remove item previous item we have in the list with the same
         // tag
-        var cleanedUpTargetItems = [];
+        var indexToRemove = undefined;
         target_items.forEach(function(itemPtr) {
-            if (itemPtr.tag !== tag) {
-                cleanedUpTargetItems.push(itemPtr);
+            if (itemPtr.tag === tag) {
+                indexToRemove = target_items.indexOf(itemPtr);
             }
         });
 
-        target_items = cleanedUpTargetItems;
+        if (indexToRemove !== undefined) {
+            target_items.splice(indexToRemove, 1);
+        }
 
         // add the menu item
         var toolbarItem = {
@@ -250,9 +252,6 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
             return l.order - r.order;
         });
 
-        // set the target items
-        self.items = target_items;
-        
         // emit an event
         $rootScope.$emit('toolbar.updated');
     }
