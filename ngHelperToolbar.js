@@ -148,6 +148,17 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
             })
         }
 
+        // ensure that we remove item previous item we have in the list with the same
+        // tag
+        var cleanedUpTargetItems = [];
+        target_items.forEach(function(itemPtr) {
+            if (itemPtr.tag !== tag) {
+                cleanedUpTargetItems.push(itemPtr);
+            }
+        });
+
+        target_items = cleanedUpTargetItems;
+
         // add the menu item
         var toolbarItem = {
             tag: tag,
@@ -239,6 +250,9 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
             return l.order - r.order;
         });
 
+        // set the target items
+        self.items = target_items;
+        
         // emit an event
         $rootScope.$emit('toolbar.updated');
     }
