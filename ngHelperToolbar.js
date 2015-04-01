@@ -215,7 +215,7 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
                 return (toolbarItem.items.length > 0);
             },
             hasImage: function() {
-                return (toolbarItem.iconClass.indexOf('img:') == 0 )
+                return (toolbarItem.iconClass !== null && toolbarItem.iconClass !== undefined && toolbarItem.iconClass.indexOf('img:') == 0 )
             },
             imageUrl: function() {
                 if (toolbarItem.hasImage())
