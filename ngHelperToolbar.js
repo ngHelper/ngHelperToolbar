@@ -235,6 +235,10 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
                     return toolbarItem.iconClass.substr(4, this.iconClass.length);
                 else
                     return "";
+            },
+            isDivider: function() {
+                console.log("IsDivider:" + name)
+                return name === 'DIVIDER';
             }
         };
 
