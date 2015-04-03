@@ -3,7 +3,7 @@
     "main": [
         "ngHelperToolbar.js"
     ],
-    "version": "0.0.1",
+    "version": "0.0.3",
     "homepage": "https://github.com/ngHelper/ngHelperToolbar",
     "authors": [
         "dei79 <dirk.eisenberg@gmail.com>"
