@@ -53,8 +53,8 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
     self.items = [];
 
     // Adds a new item to the menu structure
-    self.addItem =  function(tag, name, icon, tooltip, visible, action, order, parent_tag ) {
-        addItemInternal(tag, name, icon, tooltip, visible, action, false, order, parent_tag);
+    self.addItem =  function(tag, name, icon, tooltip, visible, action, order, parent_tag, secondary_action_icon, secondary_action ) {
+        addItemInternal(tag, name, icon, tooltip, visible, action, false, order, parent_tag, secondary_action_icon, secondary_action );
     };
 
 
@@ -106,6 +106,38 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
         $rootScope.$emit('toolbar.updated');
     });
 
+    // This internal function exectues the content of a give action handler. This could
+    // be different things, e.g. an URL or a JS function.
+    function executeActionHandler(actionHandler) {
+
+        if (actionHandler === undefined || actionHandler == null) {
+            return;
+            // Check if the variable is a string
+        } else if (typeof actionHandler == 'string' || actionHandler instanceof String) {
+
+            if (actionHandler.indexOf('http') == 0) {
+
+                // Option: The action is a full url, if that we just use the window service to navigate
+                $window.location.href = actionHandler;
+
+            } else if (actionHandler.indexOf('ref:') == 0) {
+
+                // Option: The action is a relative url, if that we just use the window service to navigate
+                $window.location.href = actionHandler.substr(5, actionHandler.length);
+
+            } else {
+
+                // Option: The action is a local resource path, if that we just use the location service
+                $location.url(actionHandler)
+            }
+        }
+        else
+        {
+            // Option: The action is a function as self. if that we just execute the function to
+            // perform the operation
+            actionHandler();
+        }
+    }
 
     // This function add a new item to the menu structure. When the item is added the updated event will
     // be send to the infrastructure so that listener e.g. a navigation controller can wait for this
@@ -129,11 +161,13 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
     // 2. A function which needs to return true or false
     // 3. Data which will be passed to the visibility callback handler
     //
-    function addItemInternal(tag, name, icon, tooltip, visible, action, pinned, order, parent_tag ) {
+    function addItemInternal(tag, name, icon, tooltip, visible, action, pinned, order, parent_tag, secondary_action_icon, secondary_action) {
 
         // ensure the parent_tag is null if not set
         parent_tag = typeof parent_tag !== undefined ? parent_tag : null;
         order = order !== undefined ? order : 0;
+        secondary_action_icon = secondary_action_icon !== undefined ? secondary_action_icon : null;
+        secondary_action = secondary_action !== undefined ? secondary_action : null;
 
         // define the items-collection we want to add to
         var target_items = self.items;
@@ -194,41 +228,21 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
                 }
             },
             actionHandler: action,
-            action: function() {
-
-                if (toolbarItem.actionHandler === undefined || toolbarItem.actionHandler == null) {
-                    return;
-                    // Check if the variable is a string
-                } else if (typeof toolbarItem.actionHandler == 'string' || toolbarItem.actionHandler instanceof String) {
-
-                    if (toolbarItem.actionHandler.indexOf('http') == 0) {
-
-                        // Option: The action is a full url, if that we just use the window service to navigate
-                        $window.location.href = toolbarItem.actionHandler;
-
-                    } else if (toolbarItem.actionHandler.indexOf('ref:') == 0) {
-
-                            // Option: The action is a relative url, if that we just use the window service to navigate
-                            $window.location.href = toolbarItem.actionHandler.substr(5, toolbarItem.actionHandler.length);
-
-                    } else {
-
-                        // Option: The action is a local resource path, if that we just use the location service
-                        $location.url(toolbarItem.actionHandler)
-                    }
-                }
-                else
-                {
-                    // Option: The action is a function as self. if that we just execute the function to
-                    // perform the operation
-                    toolbarItem.actionHandler();
-                }
+            action: function() { executeActionHandler(toolbarItem.actionHandler) },
+            secondaryActionIcon: secondary_action_icon,
+            secondaryActionHandler: secondary_action,
+            secondaryAction: function() { executeActionHandler(toolbarItem.secondaryActionHandler) },
+            hasSecondaryAction: function() {
+                return (toolbarItem.secondaryActionHandler !== null);
             },
             hasChilds: function() {
                 return (toolbarItem.items.length > 0);
             },
+            hasIconClass: function() {
+                return (toolbarItem.iconClass !== null && toolbarItem.iconClass !== undefined);
+            },
             hasImage: function() {
-                return (toolbarItem.iconClass !== null && toolbarItem.iconClass !== undefined && toolbarItem.iconClass.indexOf('img:') == 0 )
+                return (toolbarItem.hasIconClass() && toolbarItem.iconClass.indexOf('img:') == 0 )
             },
             imageUrl: function() {
                 if (toolbarItem.hasImage())
@@ -237,7 +251,6 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
                     return "";
             },
             isDivider: function() {
-                console.log("IsDivider:" + name)
                 return name === 'DIVIDER';
             }
         };
