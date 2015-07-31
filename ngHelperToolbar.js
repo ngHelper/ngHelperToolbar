@@ -82,6 +82,24 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
         updateListener.push(callback);
     };
 
+    // Allows to execute an action by the fiven tag name
+    self.performAction = function(toolBarItemTag, childItems) {
+
+        if (!childItems) { childItems = self.items };
+
+        childItems.every(function(item) {
+            if (item.tag === toolBarItemTag) {
+                executeActionHandler(item.actionHandler);
+                return false;
+            } else if(item.hasChilds()) {
+                self.performAction(toolBarItemTag, item.items);
+                return true;
+            } else {
+                return true;
+            }
+        })
+    };
+
     // Notify all update listeners when the toolbar has changed
     $rootScope.$on('toolbar.updated', function() {
         updateListener.forEach(function(listener) {
