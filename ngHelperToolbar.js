@@ -109,18 +109,30 @@ ngHelperToolbar.service('$toolbar', [ '$rootScope', '$window', '$location', func
 
     // When a naviagtion process is started the system removes all items from the toolbar
     // se that the target controller can rebuild the toolbar again
-    $rootScope.$on('$routeChangeStart', function() {
+    function resetItemsOnRouteChange() {
         self.items = [];
 
         pinnedItems.forEach( function(pinnedItem) {
             self.items.push(pinnedItem);
         });
+    }
+
+    $rootScope.$on('$routeChangeStart', function() {
+        resetItemsOnRouteChange();
+    });
+
+    $rootScope.$on('$stateChangeStart', function() {
+        resetItemsOnRouteChange();
     });
 
     // After a successfully navigation the system forces a repainting of the toolbar
     // because it could be that no menu entries are registered from the controller. This
     // ensure that no outdated items are in the controller
     $rootScope.$on('$routeChangeSuccess', function() {
+        $rootScope.$emit('toolbar.updated');
+    });
+
+    $rootScope.$on('$stateChangeSuccess', function() {
         $rootScope.$emit('toolbar.updated');
     });
 
